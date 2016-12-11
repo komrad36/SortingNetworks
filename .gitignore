@@ -1,0 +1,12 @@
+*
+!.gitignore
+!main.cpp
+!sorts.h
+!sorts.cpp
+!Makefile
+!README.md
+!sort2a.asm
+!sort3a.asm
+!sort4a.asm
+!sort5a.asm
+!sort6a.asm
