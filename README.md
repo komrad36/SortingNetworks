@@ -72,6 +72,7 @@ obviously you can and should use LTO.
 Available sorts and their function names:
 
 -SSE (fast as hell. FASTEST option on modern CPUs):
+
     Sorting 4 int32_t  |  simdsort4()
     Sorting 6 int8_t   |  simdsort6()
 
@@ -82,6 +83,7 @@ are mainly intended as targets to compare compiler output
 to, in order to ensure that your compiler is generating
 the right thing from a C++ sort function like that of sort2()
 or sort6(). Note that MOST COMPILERS DO THIS VERY POORLY.
+
     Sorting 2 int32_t  |  sort2a()
     Sorting 3 int32_t  |  sort3a()
     Sorting 4 int32_t  |  sort4a()
@@ -90,5 +92,6 @@ or sort6(). Note that MOST COMPILERS DO THIS VERY POORLY.
 
 -C++ (MAKE SURE YOUR COMPILER SUCCESSFULLY GENERATES
 THE DESIRED ASSEMBLY by comparing it to the assembly snippets!)
+
     Sorting 2 int32_t  |  sort2()
     Sorting 6 int32_t  |  sort6()
