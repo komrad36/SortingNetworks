@@ -71,11 +71,11 @@ obviously you can and should use LTO.
 
 Available sorts and their function names:
 
->>> SSE (fast as hell. FASTEST option on modern CPUs):
+-SSE (fast as hell. FASTEST option on modern CPUs):
 Sorting 4 int32_t  |  simdsort4()
 Sorting 6 int8_t   |  simdsort6()
 
->>> Assembly (these are written in MASM for Win64;
+-Assembly (these are written in MASM for Win64;
 but it's Intel syntax and you can make the small
 modifications required for other assemblers. These
 are mainly intended as targets to compare compiler output
@@ -88,7 +88,7 @@ Sorting 4 int32_t  |  sort4a()
 Sorting 5 int32_t  |  sort5a()
 Sorting 6 int32_t  |  sort6a()
 
->>> C++ (MAKE SURE YOUR COMPILER SUCCESSFULLY GENERATES
+-C++ (MAKE SURE YOUR COMPILER SUCCESSFULLY GENERATES
 THE DESIRED ASSEMBLY by comparing it to the assembly snippets!)
 Sorting 2 int32_t  |  sort2()
 Sorting 6 int32_t  |  sort6()
