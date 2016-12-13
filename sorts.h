@@ -14,7 +14,7 @@
 // using SSE4. These are the fastest known approaches on modern CPUs.
 //
 // 4 int32_t can be sorted in 1.4 nanoseconds.
-// 4 int8_t can be sorted in 2.4 nanoseconds.
+// 6 int8_t can be sorted in 2.4 nanoseconds.
 //
 // I also provide optimal assembly snippets for sorting arrays of int32_t with
 // 2-6 elements and POSSIBLE C++ equivalents that could compile to optimal assembly
@@ -65,6 +65,14 @@
 // As an example, my simdsort4() function uses only SSE4, no AVX,
 // to accomplish a 4-sort in just a few cycles
 // (1.40 nanoseconds on my machine (!)).
+//
+// NOTE that I provide two different implementations of simdsort4(),
+// one using all integer instructions but two extra logical operations,
+// and one using fewer logical operations but with a float reinterpretation.
+// Which is faster will depend on your architecture; comment out the current
+// one and uncomment the other to try it. It's important to only leave one
+// uncommented at a time, as the extra data can actually affect timings
+// significantly.
 //
 // Similarly, the best results for int8_t sorting, as long as your array
 // size is 16 or less, by FAR, are obtained using SSE.

@@ -14,7 +14,7 @@
 // using SSE4. These are the fastest known approaches on modern CPUs.
 //
 // 4 int32_t can be sorted in 1.4 nanoseconds.
-// 4 int8_t can be sorted in 2.4 nanoseconds.
+// 6 int8_t can be sorted in 2.4 nanoseconds.
 //
 // I also provide optimal assembly snippets for sorting arrays of int32_t with
 // 2-6 elements and POSSIBLE C++ equivalents that could compile to optimal assembly
@@ -65,6 +65,14 @@
 // As an example, my simdsort4() function uses only SSE4, no AVX,
 // to accomplish a 4-sort in just a few cycles
 // (1.40 nanoseconds on my machine (!)).
+//
+// NOTE that I provide two different implementations of simdsort4(),
+// one using all integer instructions but two extra logical operations,
+// and one using fewer logical operations but with a float reinterpretation.
+// Which is faster will depend on your architecture; comment out the current
+// one and uncomment the other to try it. It's important to only leave one
+// uncommented at a time, as the extra data can actually affect timings
+// significantly.
 //
 // Similarly, the best results for int8_t sorting, as long as your array
 // size is 16 or less, by FAR, are obtained using SSE.
@@ -138,42 +146,67 @@ void sort6(int* __restrict d) {
 #undef min
 }
 
-__m128i pass1_add4 = _mm_setr_epi8(4, 5, 6, 7, 4, 5, 6, 7, 12, 13, 14, 15, 12, 13, 14, 15);
-__m128i pass2_add4 = _mm_setr_epi8(8, 9, 10, 11, 12, 13, 14, 15, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass3_add4 = _mm_setr_epi8(0, 1, 2, 3, 8, 9, 10, 11, 8, 9, 10, 11, 12, 13, 14, 15);
+//const __m128i pass1_add4s = _mm_setr_epi8(4, 5, 6, 7, 4, 5, 6, 7, 12, 13, 14, 15, 12, 13, 14, 15);
+//const __m128i pass2_add4s = _mm_setr_epi8(8, 9, 10, 11, 12, 13, 14, 15, 8, 9, 10, 11, 12, 13, 14, 15);
+//const __m128i pass3_add4s = _mm_setr_epi8(0, 1, 2, 3, 8, 9, 10, 11, 8, 9, 10, 11, 12, 13, 14, 15);
+//void simdsort4(int* __restrict v) {
+//	__m128i b, a = _mm_loadu_si128(reinterpret_cast<const __m128i*>(v));
+//
+//	b = _mm_shuffle_epi32(a, 177);
+//	b = _mm_cmpgt_epi32(b, a);
+//	b = _mm_and_si128(b, _mm_set1_epi8(-4));
+//	b = _mm_add_epi8(b, pass1_add4s);
+//	a = _mm_shuffle_epi8(a, b);
+//
+//	b = _mm_shuffle_epi32(a, 78);
+//	b = _mm_cmpgt_epi32(b, a);
+//	b = _mm_and_si128(b, _mm_set1_epi8(-8));
+//	b = _mm_add_epi8(b, pass2_add4s);
+//	a = _mm_shuffle_epi8(a, b);
+//
+//	b = _mm_shuffle_epi32(a, 216);
+//	b = _mm_cmpgt_epi32(b, a);
+//	b = _mm_and_si128(b, _mm_set1_epi8(-4));
+//	b = _mm_add_epi8(b, pass3_add4s);
+//	a = _mm_shuffle_epi8(a, b);
+//
+//	_mm_storeu_si128(reinterpret_cast<__m128i*>(v), a);
+//}
+
+const __m128i pass1_add4 = _mm_setr_epi32(1, 1, 3, 3);
+const __m128i pass2_add4 = _mm_setr_epi32(2, 3, 2, 3);
+const __m128i pass3_add4 = _mm_setr_epi32(0, 2, 2, 3);
 void simdsort4(int* __restrict v) {
 	__m128i b, a = _mm_loadu_si128(reinterpret_cast<const __m128i*>(v));
 
 	b = _mm_shuffle_epi32(a, 177);
 	b = _mm_cmpgt_epi32(b, a);
-	b = _mm_and_si128(b, _mm_set1_epi8(-4));
-	b = _mm_add_epi8(b, pass1_add4);
-	a = _mm_shuffle_epi8(a, b);
+	b = _mm_add_epi32(b, pass1_add4);
+	a = _mm_castps_si128(_mm_permutevar_ps(_mm_castsi128_ps(a), b));
 
 	b = _mm_shuffle_epi32(a, 78);
 	b = _mm_cmpgt_epi32(b, a);
-	b = _mm_and_si128(b, _mm_set1_epi8(-8));
-	b = _mm_add_epi8(b, pass2_add4);
-	a = _mm_shuffle_epi8(a, b);
+	b = _mm_and_si128(b, _mm_set1_epi8(-2));
+	b = _mm_add_epi32(b, pass2_add4);
+	a = _mm_castps_si128(_mm_permutevar_ps(_mm_castsi128_ps(a), b));
 
 	b = _mm_shuffle_epi32(a, 216);
 	b = _mm_cmpgt_epi32(b, a);
-	b = _mm_and_si128(b, _mm_set1_epi8(-4));
-	b = _mm_add_epi8(b, pass3_add4);
-	a = _mm_shuffle_epi8(a, b);
+	b = _mm_add_epi32(b, pass3_add4);
+	a = _mm_castps_si128(_mm_permutevar_ps(_mm_castsi128_ps(a), b));
 
 	_mm_storeu_si128(reinterpret_cast<__m128i*>(v), a);
 }
 
-__m128i pass1_shf = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass1_add = _mm_setr_epi8(1, 1, 3, 3, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass2_shf = _mm_setr_epi8(2, 4, 0, 5, 1, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass2_and = _mm_setr_epi8(-2, -3, -2, -2, -3, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-__m128i pass2_add = _mm_setr_epi8(2, 4, 2, 5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass4_shf = _mm_setr_epi8(0, 2, 1, 4, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass4_add = _mm_setr_epi8(0, 2, 2, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass5_shf = _mm_setr_epi8(0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-__m128i pass5_add = _mm_setr_epi8(0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass1_shf = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass1_add = _mm_setr_epi8(1, 1, 3, 3, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass2_shf = _mm_setr_epi8(2, 4, 0, 5, 1, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass2_and = _mm_setr_epi8(-2, -3, -2, -2, -3, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+const __m128i pass2_add = _mm_setr_epi8(2, 4, 2, 5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass4_shf = _mm_setr_epi8(0, 2, 1, 4, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass4_add = _mm_setr_epi8(0, 2, 2, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass5_shf = _mm_setr_epi8(0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+const __m128i pass5_add = _mm_setr_epi8(0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 void simdsort6(char* __restrict v) {
 	__m128i b, a = _mm_cvtsi32_si128(*reinterpret_cast<const int*>(v));
 	a = _mm_insert_epi16(a, *reinterpret_cast<const int*>(v + 4), 2);
