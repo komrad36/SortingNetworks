@@ -40,30 +40,30 @@ fixed-size, small arrays.
 
 Available sorts and their function names:
 
-SSE Assembly (fast as hell. FASTEST option on modern CPUs.
-					 these are written in MASM for Win64;
-					 but it's Intel syntax and you can make the small
-					 modifications required for other assemblers.)
-Sorting 4 int32_t  |  simdsort4a()
-Sorting 4 int32_t  |  simdsort4a_noconstants()
-Sorting 4 int32_t  |  simdsort4a_nofloat()
-
-SSE C++ (make sure generated assembly matches):
-Sorting 4 int32_t  |  simdsort4()
-Sorting 6 int8_t   |  simdsort6()
-
-Scalar Assembly (these are written in MASM for Win64;
-						but it's Intel syntax and you can make the small
-						modifications required for other assemblers.)
-Sorting 2 int32_t  |  sort2a()
-Sorting 3 int32_t  |  sort3a()
-Sorting 4 int32_t  |  sort4a()
-Sorting 5 int32_t  |  sort5a()
-Sorting 6 int32_t  |  sort6a()
-
-Scalar C++ (make sure generated assembly matches)
-Sorting 2 int32_t  |  sort2()
-Sorting 6 int32_t  |  sort6()
+    SSE Assembly (fast as hell. FASTEST option on modern CPUs.
+    				 these are written in MASM for Win64;
+    				 but it's Intel syntax and you can make the small
+    				 modifications required for other assemblers.)
+    Sorting 4 int32_t  |  simdsort4a()
+    Sorting 4 int32_t  |  simdsort4a_noconstants()
+    Sorting 4 int32_t  |  simdsort4a_nofloat()
+    
+    SSE C++ (make sure generated assembly matches):
+    Sorting 4 int32_t  |  simdsort4()
+    Sorting 6 int8_t   |  simdsort6()
+    
+    Scalar Assembly (these are written in MASM for Win64;
+    					but it's Intel syntax and you can make the small
+    					modifications required for other assemblers.)
+    Sorting 2 int32_t  |  sort2a()
+    Sorting 3 int32_t  |  sort3a()
+    Sorting 4 int32_t  |  sort4a()
+    Sorting 5 int32_t  |  sort5a()
+    Sorting 6 int32_t  |  sort6a()
+    
+    Scalar C++ (make sure generated assembly matches)
+    Sorting 2 int32_t  |  sort2()
+    Sorting 6 int32_t  |  sort6()
 
 
 Okay, if you've made it this far, let's discuss
