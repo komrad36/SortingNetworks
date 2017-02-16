@@ -1,9 +1,7 @@
 *
 !.gitignore
-!main.cpp
 !sorts.h
 !sorts.cpp
-!Makefile
 !README.md
 !sort2a.asm
 !sort3a.asm
