@@ -20,7 +20,7 @@ extern "C" {
 
 #include "KIterTools.h"
 
-constexpr auto f = simdsort4a;
+constexpr auto f = simdsort4a_noconstants;
 
 int main() {
 	std::vector<int> ref = { rand()*(INT_MAX/RAND_MAX*2), rand()*(INT_MAX / RAND_MAX*2), rand()*(INT_MAX / RAND_MAX*2), rand()*(INT_MAX / RAND_MAX*2) };
