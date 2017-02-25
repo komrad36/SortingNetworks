@@ -1,4 +1,4 @@
-*I present novel and state-of-the-art sorting of 4 int32_t
+*SUMMARY: I present novel and state-of-the-art sorting of 4 int32_t
 and sorting of 6 int8_t, as examples, using SSE4, and some thoughts
 and notes on fast sorting of small fixed-size arrays.*
 
@@ -41,9 +41,9 @@ fixed-size, small arrays.
 Available sorts and their function names:
 
     SSE Assembly (fast as hell. FASTEST option on modern CPUs.
-    				 these are written in MASM for Win64;
-    				 but it's Intel syntax and you can make the small
-    				 modifications required for other assemblers.)
+    					 these are written in MASM for Win64;
+    					 but it's Intel syntax and you can make the small
+    					 modifications required for other assemblers.)
     Sorting 4 int32_t  |  simdsort4a()
     Sorting 4 int32_t  |  simdsort4a_noconstants()
     Sorting 4 int32_t  |  simdsort4a_nofloat()
@@ -53,8 +53,8 @@ Available sorts and their function names:
     Sorting 6 int8_t   |  simdsort6()
     
     Scalar Assembly (these are written in MASM for Win64;
-    					but it's Intel syntax and you can make the small
-    					modifications required for other assemblers.)
+    						but it's Intel syntax and you can make the small
+    						modifications required for other assemblers.)
     Sorting 2 int32_t  |  sort2a()
     Sorting 3 int32_t  |  sort3a()
     Sorting 4 int32_t  |  sort4a()
@@ -65,17 +65,17 @@ Available sorts and their function names:
     Sorting 2 int32_t  |  sort2()
     Sorting 6 int32_t  |  sort6()
 
-
 Okay, if you've made it this far, let's discuss
-fast CAS operations, which are the heart of sorting
-networks. CAS == Compare And Swap. Given two values,
+fast conditional swap operations. Conditional swaps
+if the lower element is greater are the heart of sorting
+networks. Given two values,
 'a', and 'b', leave them as they are if 'a' is less
 than 'b', i.e. if they are in sorted order. However,
 swap them if 'a' is greater than or equal to 'b'.
-Thus after a CAS operation 'a' and 'b' are in sorted
+Thus after such a conditional swap operation 'a' and 'b' are in sorted
 order no matter what order they came in as.
 
-A series of CAS operations can deterministically sort
+A series of such operations can deterministically sort
 a fixed-size array. Typically one can optimize for depth
 (minimum number of operations given infinite parallel
 processing) or for size (minimum number of operations given
@@ -83,21 +83,21 @@ no parallel processing). For n == 4 these two optimal solutions
 are actually given by the same network, with depth 3 and
 size 5.
 
-Scalar first: how do you efficiently CAS? Again, note that
+Scalar first: how do you efficiently conditional swap? Again, note that
 lots of compilers don't produce optimal assembly no matter
 what C++ you give them. But what is the optimal assembly?
 Well, on modern processors, the answer is conditional moves:
 
 	; inputs: eax, r9d
 	; scratch register: edx
-	cmp	eax, r9d
-	mov	edx, eax
-	cmovg	eax, r9d
-	cmovg	r9d, edx
+	cmp     eax, r9d
+	mov     edx, eax
+	cmovg   eax, r9d
+	cmovg   r9d, edx
 	; eax and r9d have been swapped if necessary such that eax is now <= r9d
 
 See the function 'sort6' in 'sorts.cpp' for an attempt at some C++ code
-that has a decent chance of compiling into CAS operations that look like that.
+that has a decent chance of compiling into conditional swaps that look like that.
 Again, they OFTEN DON'T, especially the CL compiler and g++. Use the assembly
 snippets instead, or at least profile and inspect your disassembly to be sure.
 
