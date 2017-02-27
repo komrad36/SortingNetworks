@@ -142,7 +142,7 @@ simdsort4a_noconstants PROC
 	vpcmpgtq    xmm2, xmm1, xmm0
 	vpblendvb	xmm0, xmm0, xmm1, xmm2
 	vpshufd     xmm1, xmm0, 78
-	vpcmpgtd    xmm2, xmm1, xmm0z
+	vpcmpgtd    xmm2, xmm1, xmm0
 	vpshufd     xmm2, xmm2, 238
 	vpblendvb	xmm0, xmm0, xmm1, xmm2
 	vpshufd     xmm1, xmm0, 216
