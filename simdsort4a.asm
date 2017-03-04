@@ -152,7 +152,7 @@ simdsort4a PROC
 	vpermilps   xmm0, xmm0, xmm1
 	vpshufd     xmm1, xmm0, 78
 	vpcmpgtd    xmm1, xmm1, xmm0
-	vpslld		xmm1, xmm1, 1
+	vpaddd		xmm1, xmm1, xmm1
 	vpaddd      xmm1, xmm1, xmmword ptr [pass2_add4]
 	vpermilps   xmm0, xmm0, xmm1
 	vpshufd     xmm1, xmm0, 216
