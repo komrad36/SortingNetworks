@@ -136,11 +136,10 @@
 
 ALIGN 16
 
-pass1_and4 OWORD 0fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfch
+pass1_3_and4 OWORD 0fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfch
 pass1_add4 OWORD 00F0E0D0C0F0E0D0C0706050407060504h
 pass2_and4 OWORD 0f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8h
 pass2_add4 OWORD 00F0E0D0C0B0A09080F0E0D0C0B0A0908h
-pass3_and4 OWORD 0fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfch
 pass3_add4 OWORD 00F0E0D0C0B0A09080B0A090803020100h
 
 .CODE
@@ -151,7 +150,7 @@ simdsort4a_nofloat PROC
 	vmovdqu     xmm0, xmmword ptr [rcx]
 	vpshufd     xmm1, xmm0, 177
 	vpcmpgtd    xmm1, xmm1, xmm0
-	vpand       xmm1, xmm1, xmmword ptr [pass1_and4]
+	vpand       xmm1, xmm1, xmmword ptr [pass1_3_and4]
 	vpaddb      xmm1, xmm1, xmmword ptr [pass1_add4]
 	vpshufb     xmm0, xmm0, xmm1
 	vpshufd     xmm1, xmm0, 78
@@ -161,7 +160,7 @@ simdsort4a_nofloat PROC
 	vpshufb     xmm0, xmm0, xmm1
 	vpshufd     xmm1, xmm0, 216
 	vpcmpgtd    xmm1, xmm1, xmm0
-	vpand       xmm1, xmm1, xmmword ptr [pass3_and4]
+	vpand       xmm1, xmm1, xmmword ptr [pass1_3_and4]
 	vpaddb      xmm1, xmm1, xmmword ptr [pass3_add4]
 	vpshufb     xmm0, xmm0, xmm1
 	vmovdqu     xmmword ptr [rcx], xmm0

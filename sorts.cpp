@@ -204,7 +204,7 @@ void simdsort4(int* __restrict v) {
 
 	b = _mm_shuffle_epi32(a, 78);
 	b = _mm_cmpgt_epi32(b, a);
-	b = _mm_slli_epi32(b, 1);
+	b = _mm_add_epi32(b, b);
 	b = _mm_add_epi32(b, pass2_add4);
 	a = _mm_castps_si128(_mm_permutevar_ps(_mm_castsi128_ps(a), b));
 
